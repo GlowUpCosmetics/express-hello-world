@@ -1,61 +1,44 @@
-const express = require("express");
+const express = require('express');
+const multer = require('multer');
 const app = express();
-const port = process.env.PORT || 3001;
+const axios = require('axios'); // Use axios to make requests
 
-app.get("/", (req, res) => res.type('html').send(html));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-const server = app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+// Set up multer for file uploads
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
-server.keepAliveTimeout = 120 * 1000;
-server.headersTimeout = 120 * 1000;
+app.post('/upload-to-server', upload.single('image'), async (req, res) => {
+  try {
+    // Use the Dropbox API to upload the file to Dropbox
+    const dropboxResponse = await axios.post(
+      'https://content.dropboxapi.com/2/files/upload',
+      req.file.buffer,
+      {
+        headers: {
+          Authorization: `Bearer sl.BlFloxf7uM1zH67VyGaZ8qE2mm72nRNUd4_6pEM_4ZZSotsOIXyBgkK-H2zXPvTKBo2tZlHyd-FUNLql9YXjnxrqS-s_U0SNeekkh09QxctneDHBjCRSGcTvJZhlWy97PTiOKgpi8S-F`,
+          'Dropbox-API-Arg': JSON.stringify({
+            path: '/home/Glow_Up_Images' + req.file.originalname,
+            mode: 'add',
+            autorename: true,
+            mute: false,
+          }),
+        },
+      }
+    );
 
-const html = `
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Hello from Render!</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script>
-      setTimeout(() => {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-          disableForReducedMotion: true
-        });
-      }, 500);
-    </script>
-    <style>
-      @import url("https://p.typekit.net/p.css?s=1&k=vnd5zic&ht=tk&f=39475.39476.39477.39478.39479.39480.39481.39482&a=18673890&app=typekit&e=css");
-      @font-face {
-        font-family: "neo-sans";
-        src: url("https://use.typekit.net/af/00ac0a/00000000000000003b9b2033/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"), url("https://use.typekit.net/af/00ac0a/00000000000000003b9b2033/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff"), url("https://use.typekit.net/af/00ac0a/00000000000000003b9b2033/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("opentype");
-        font-style: normal;
-        font-weight: 700;
-      }
-      html {
-        font-family: neo-sans;
-        font-weight: 700;
-        font-size: calc(62rem / 16);
-      }
-      body {
-        background: white;
-      }
-      section {
-        border-radius: 1em;
-        padding: 1em;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin-right: -50%;
-        transform: translate(-50%, -50%);
-      }
-    </style>
-  </head>
-  <body>
-    <section>
-      Hello from Render!
-    </section>
-  </body>
-</html>
-`
+    // You can handle the Dropbox API response here
+    console.log(dropboxResponse.data);
+
+    res.json({ message: 'File uploaded to Dropbox' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
