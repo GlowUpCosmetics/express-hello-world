@@ -18,7 +18,7 @@ app.post('/upload-to-server', upload.single('image'), async (req, res) => {
       req.file.buffer,
       {
         headers: {
-          Authorization: `Bearer sl.BlFloxf7uM1zH67VyGaZ8qE2mm72nRNUd4_6pEM_4ZZSotsOIXyBgkK-H2zXPvTKBo2tZlHyd-FUNLql9YXjnxrqS-s_U0SNeekkh09QxctneDHBjCRSGcTvJZhlWy97PTiOKgpi8S-F`,
+          Authorization: `Bearer sl.BlEhVGWYq_u9x6p8-GlDHcm9qqduWGirQbmmgEOn4fo0rbT5nkRE17sT_Oft7LGChbcxOaMwHfmyFwERyTgzaEEEdS7S7PM3ZC-bvNGlhcJJIsT9neZZPNeIvHt8iM54r6sLe24m4wdk3vzFItPx`,
           'Dropbox-API-Arg': JSON.stringify({
             path: '/Dropbox/main/Glow_Up_Images' + req.file.originalname,
             mode: 'add',
